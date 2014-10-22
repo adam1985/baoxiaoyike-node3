@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+	<script src="/javascripts/jquery-2.1.1.min.js"></script>
+    <script src="/javascripts/template.js"></script>
+  </head>
+  <body>
+    
+	<div class="wrapper">
+        <div class="page-item-btn post-page">
+            <button id="add-item-btn">添加</button>
+            <button id="empty-item-btn">全部清空</button>
+            <input type="button" id="post-page-btn" value="抓取数据"  />
+            <input type="button" id="update-title-btn" data-dir="<%= detail.dir %>" value="标题更新"  />
+            <input type="button" id="remote-post-btn" value="远程同步网站"  />
+            <input type="button" id="remote-post-btn" value="远程同步公众平台"  />
+        </div>
+        <div class="hide page-load">
+            正在操作中，请稍后...
+        </div>
+        <%
+            var len = post_times.length;
+            if( len > 0) {
+
+        %>
+        <div class="art-time">同步数据时间：
+            <select id="sync-art-time">
+                <% for (var n = 0; n < len; n++) {
+                    var selected = "";
+                    if( n == 0 ) {
+                        selected = "selected=selected";
+                    }
+                %>
+
+                    <option <%= selected %> value="<%= post_times[n].value %>"><%= post_times[n].text %></option>
+                <% } %>
+            </select>
+        </div>
+        <% } %>
+		<div class="page-item-box" id="page-item-box">
+            <% var list = detail.list; %>
+            <% if (list && list.length) { %>
+
+                <% for (var i = 0; i < list.length; i++) { %>
+                    <div class="page-item post-page-list">
+                        <input class="tinput url" type="text" value="<%= list[i].sourcePage %>" placeholder="请输入微信页面地址" />
+                        <div class="remote-post">
+                            <form>
+                                <input name="title" class="tinput title" type="text" value="<%= list[i].title %>"/>
+                                <input name="pageUrl" type="hidden" value="<%= list[i].pageUrl || '' %>"/>
+                                <input name="imgSrc" type="hidden" value="<%= list[i].imgSrc || '' %>"/>
+                                <select name="in-category" class="select">
+                                    <%
+                                        var categorys = [
+                                                {value : "2", text: "叽歪笑话"},
+                                                {value : "11", text: "爆笑体育"},
+                                                {value : "12", text: "天下趣闻"},
+                                                {value : "13", text: "幽默笑话"},
+                                                {value : "14", text: "经典笑话"},
+                                                {value : "15", text: "内涵笑话"}
+                                        ],
+                                        incategory = list[i]["in-category"] || 2;
+                                        if( incategory ) {
+                                            categorys.forEach(function(val, index){
+                                                if( val.value == incategory ) {
+                                                    categorys[index].selected = "selected=selected";
+                                                }
+                                            });
+                                        }
+
+                                    %>
+                                    <% for (var n = 0; n < categorys.length; n++) {
+                                            var selected = "";
+                                            if( categorys[n].selected ) {
+                                                selected = categorys[n].selected;
+                                            }
+                                    %>
+                                        <option <%= selected %> value="<%= categorys[n].value %>"><%= categorys[n].text %></option>
+                                    <% } %>
+                                </select>
+                                <label class="post-label"></label>
+
+                                <select name="post-state" class="select post-state">
+
+                                    <%
+                                        var postType = [
+                                            {value : "1", text: "发布"},
+                                            {value : "2", text: "不发布"}
+                                        ];
+
+                                        var postState = list[i]["post-state"];
+
+                                        if( !list[i]["post-state"] ){
+                                            postState = 1;
+                                        }
+
+                                        if( postState ) {
+                                            postType.forEach(function(val, index){
+                                                if( val.value == postState ) {
+                                                    postType[index].selected = "selected=selected";
+                                                }
+                                            });
+                                        }
+
+                                    %>
+
+                                    <% for (var j = 0; j < postType.length; j++) {
+                                        var selected = "";
+                                        if( postType[j].selected ) {
+                                            selected = postType[j].selected;
+                                        }
+                                    %>
+                                    <option <%= selected %> value="<%= postType[j].value %>"><%= postType[j].text %></option>
+                                    <% } %>
+
+                                </select>
+                                <%
+                                    var postStatus = list[i]["post-status"] || "末发布",
+                                        successState = list[i]["success"] || 0;
+                                %>
+                                <input type="hidden" name="have_post" value="<%= successState %>" >
+                                <span class="post-status"><%= postStatus %></span>
+                                <span class="hide post-msg">正在发布中，请稍后</span>
+                            </form>
+                        </div>
+                    </div>
+                <% } %>
+
+            <% } else { %>
+                <% for (var i = 0; i < 6; i ++) { %>
+                <div class="page-item">
+                    <input class="tinput url" type="text" value="" placeholder="请输入微信页面地址" />
+                </div>
+                <% } %>
+            <% } %>
+		</div>
+	</div>
+
+    <script id="page-item-template" type="text/html">
+        {{ var list = detail.list; }}
+        {{ if (list.length) { }}
+            {{ for (var i = 0; i < list.length; i ++) { }}
+                <div class="page-item post-page-list">
+                        <input class="tinput url" type="text" value="{{= list[i].sourcePage }}" placeholder="请输入微信页面地址" />
+                        <div class="remote-post">
+                            <form>
+                                <input name="title" class="tinput title" type="text" value="{{= list[i].title }}" />
+                                <input name="pageUrl" type="hidden" value="{{= list[i].pageUrl || '' }}" />
+                                <input name="imgSrc" type="hidden" value="{{= list[i].imgSrc || '' }}" />
+                                <select name="in-category" class="select">
+
+                                    {{
+                                        var categorys = [
+                                                    {value : "2", text: "叽歪笑话"},
+                                                    {value : "11", text: "爆笑体育"},
+                                                    {value : "12", text: "天下趣闻"},
+                                                    {value : "13", text: "幽默笑话"},
+                                                    {value : "14", text: "经典笑话"},
+                                                    {value : "15", text: "内涵笑话"}
+                                                ],
+                                                incategory = list[i]["in-category"] || 2;
+                                        if( incategory ) {
+                                            categorys.forEach(function(val, index){
+                                                if( val.value == incategory ) {
+                                                    categorys[index].selected = "selected=selected";
+                                                }
+                                            });
+                                        }
+
+                                    }}
+                                    {{ for (var n = 0; n < categorys.length; n++) {
+                                        var selected = "";
+                                        if( categorys[n].selected ) {
+                                            selected = categorys[n].selected;
+                                        }
+                                    }}
+                                    <option {{= selected }} value="{{= categorys[n].value }}">{{= categorys[n].text }}</option>
+                                    {{ } }}
+
+                                </select>
+                                <label class="post-label"></label>
+                                <select name="post-state" class="select post-state">
+
+                                    {{
+                                        var postType = [
+                                            {value : "1", text: "发布"},
+                                            {value : "2", text: "不发布"}
+                                        ];
+
+                                        var postState = list[i]["post-state"];
+
+                                        if( !list[i]["post-state"] ){
+                                            postState = 1;
+                                        }
+
+                                        if( postState ) {
+                                            postType.forEach(function(val, index){
+                                                if( val.value == postState ) {
+                                                    postType[index].selected = "selected=selected";
+                                                }
+                                            });
+                                        }
+
+                                    }}
+
+                                    {{ for (var j = 0; j < postType.length; j++) {
+                                        var selected = "";
+                                        if( postType[j].selected ) {
+                                            selected = postType[j].selected;
+                                        }
+                                    }}
+                                    <option {{= selected }} value="{{= postType[j].value }}">{{= postType[j].text }}</option>
+                                    {{ } }}
+
+                                </select>
+
+                                {{
+                                    var postStatus = list[i]["post-status"] || "末发布",
+                                    successState = list[i]["success"] || 0;
+                                }}
+                                <input type="hidden" name="have_post" value="{{= successState }}" >
+                                <span class="post-status">{{= postStatus }}</span>
+
+                                <span class="hide post-msg">正在发布中，请稍后</span>
+                            </form>
+                        </div>
+                </div>
+            {{ } }}
+        {{ } }}
+    </script>
+	
+	<script>
+		jQuery(function($){
+			var addItemBtn = $('#add-item-btn'),
+                emptyItemBtn = $('#empty-item-btn'),
+                pageLoad = $('.page-load'),
+			pageBox = $('#page-item-box'), 
+			pageItem = pageBox.find('.page-item'),
+			pageItemTemp = '<div class="page-item"><input class="tinput url" type="text" placeholder="请输入微信页面地址" value=""></div>'; 
+			addItemBtn.click(function(){
+				
+				pageBox.append(pageItemTemp);
+			});
+
+            emptyItemBtn.click(function(){
+				pageItem.each(function(index){
+					var $this = $(this);
+                    pageItem.eq(index).remove();
+					pageBox.append(pageItemTemp);
+				});
+            });
+
+            $('#sync-art-time').on('change', function(){
+                $.ajax({
+                    url : '/readArt',
+                    dataType : 'json',
+                    type : 'get',
+                    data : {
+                        dir : this.value
+                    },
+                    success : function( res ){
+                        if( res.success ) {
+                            var detail = res.data;
+                             $('#update-title-btn').attr('data-dir', detail.dir);
+                             var html = template.render('page-item-template', {
+                                detail : detail
+                             });
+
+                             $('#page-item-box').html( html );
+                        }
+                    }
+                });
+            });
+			
+			$('#post-page-btn').on('click', function(){
+				var input = pageBox.find('input.url'), data = [];
+
+                pageLoad.show(0);
+                input.each(function(){
+					if(this.value ){
+						data.push( this.value );
+					}
+				});
+				
+				$.ajax({
+					url : '/fetch',
+					dataType : 'json',
+					type : 'post',
+					data : {
+						urls : JSON.stringify(data)
+					},
+					success : function( res ){
+                        pageLoad.hide(0);
+						if( res.success ) {
+                            /*var detail = res.data;
+                            $('#update-title-btn').attr('data-dir', detail.dir);
+                            var html = template.render('page-item-template', {
+                                detail : detail
+                            });
+
+                            $('#page-item-box').html( html );*/
+                            location.href = '/';
+                        }
+					}
+				});
+			});
+
+
+            $('#update-title-btn').on('click', function(){
+                var input = pageBox.find('input.title'), dir =  $('#sync-art-time').val(), titles = [],
+                    pageLoad = $('.page-load');
+
+                pageLoad.show(0);
+                input.each(function(){
+                    if(this.value ){
+                        titles.push( this.value );
+                    }
+                });
+
+
+
+                $.ajax({
+                    url : '/update',
+                    dataType : 'json',
+                    type : 'post',
+                    data : {
+                        titles : JSON.stringify(titles),
+                        dir : dir
+                    },
+                    success : function( res ){
+                        pageLoad.hide(0);
+                        if( res.success ) {
+                            var detail = res.data;
+                            $('#update-title-btn').attr('data-dir', detail.dir);
+                            var html = template.render('page-item-template', {
+                                detail : detail
+                            });
+
+                            $('#page-item-box').html( html );
+                        }
+                    }
+                })
+            });
+
+
+            $('#remote-post-btn').on('click', function(){
+                 var remotePosts = pageBox.find('.post-page-list'), index = 0, len = remotePosts.length;
+                pageLoad.show();
+                (function(){
+                    var arg = arguments;
+                    if( index < len ) {
+                        var remotePost = remotePosts.eq(index),
+                            postForm = remotePost.find('form'),
+                            postMsg = remotePost.find('.post-msg'),
+                            postStatus = remotePost.find('.post-status'),
+                            postParam = postForm.serializeArray();
+                            postParam.push({
+                                name : "index",
+                                value : index
+                            });
+                            postParam.push({
+                                name : "dir",
+                                value : $('#sync-art-time').val()
+                            });
+
+                        postMsg.show();
+                        $.ajax({
+                            url : '/remote',
+                            dataType : 'json',
+                            type : 'post',
+                            data : postParam,
+                            success : function( res ){
+                                postMsg.hide();
+                                if( res.success ) {
+                                    var detail = res.data.detail,
+                                        msg = res.data.msg;
+                                    $('#update-title-btn').attr('data-dir', detail.dir);
+                                    var html = template.render('page-item-template', {
+                                        detail : detail
+                                    });
+
+                                    remotePost.replaceWith( html );
+
+                                }
+                                index++;
+                                arg.callee();
+                            }
+                        });
+                    } else {
+                        pageLoad.hide();
+                        alert('远程同步文章完成');
+                    }
+                }());
+            });
+			
+		});
+	</script>
+  </body>
+</html>
