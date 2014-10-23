@@ -6,14 +6,14 @@ var fs = require('fs'),
     tools = require('../module/tools'),
     ejs = require('ejs');
 
-var rootPath = process.cwd();
+var rootPath = process.cwd(),
     createDir = rootPath + '/create/',
     dirlists = tools.readDirNames( createDir ),
     dirlistsSort = tools.disposeDirSort(dirlists),
     resultPath = (function(){
-        var _dir =  '/result.txt';
+        var _dir =  '/pageJson.txt';
         if( dirlistsSort.latest ) {
-            _dir = createDir  + dirlistsSort.latest.value +  '/result.txt';
+            _dir = createDir  + dirlistsSort.latest.value +  '/pageJson.txt';
         }
         return _dir;
     }());
@@ -21,7 +21,7 @@ var rootPath = process.cwd();
 module.exports = function(req, res){
     var dir = req.query.dir, resPath;
     if( dir ){
-        resPath = createDir  + req.query.dir  +  '/result.txt';
+        resPath = createDir  + req.query.dir  +  '/pageJson.txt';
     } else {
         resPath = resultPath;
     }

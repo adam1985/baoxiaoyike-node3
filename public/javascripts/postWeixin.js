@@ -3,7 +3,7 @@ if( isPost === undefined ){
 }
 
 jQuery(function($){
-    var dir = '2014-10-22_14_53_26',
+    var dir = null,
         data = {};
     if( dir ){
         data.dir = dir;
