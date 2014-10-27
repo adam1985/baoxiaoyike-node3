@@ -1,10 +1,20 @@
-if( isPost === undefined ){
+if( typeof isPost === undefined ){
     var isPost = true;
 }
 
 jQuery(function($){
     var dir = null,
-        data = {};
+        postParam = [{
+            template : "content1.ejs",
+            source : "MjM5NTI1NDczOA"
+        },{
+            template : "content2.ejs",
+            source : "MjM5MDg3ODY0OA"
+        }][0],
+
+        data = {
+            template : postParam.template
+        };
     if( dir ){
         data.dir = dir;
     }
@@ -14,7 +24,6 @@ jQuery(function($){
         data : data,
         dataType : 'jsonp',
         success : function(res){
-
             if( res.success ) {
             	 var data = res.data,
                      len = data.length,
@@ -44,7 +53,7 @@ jQuery(function($){
 							$('.js_author').val( page.username );
 							ueditBody.html(page.content);
 							frm_textarea.val( page.content );
-							$('.js_url').val( page.viewSource );
+							$('.js_url').val( "http://mp.weixin.qq.com/mp/getmasssendmsg?__biz=" + postParam.source + "==#wechat_webview_type=1&wechat_redirect" );
 							$('.frm_checkbox').attr('checked', false);
 							$('.js_show_cover_pic').removeClass('selected');
 						} else {

@@ -2,18 +2,11 @@
 /*
  * GET home page.
  */
-var fs = require('fs'), tools = require('../module/tools'),
+var fs = require('fs'),
+    tools = require('../module/tools'),
+    userConf = require('../config/userConf'),
     createDir = './create/';
-var dirlists = tools.readDirNames( createDir ),
-    dirlistsSort = tools.disposeDirSort(dirlists),
-    post_times = [],
-    resultPath = (function(){
-        var _dir =  '/result.txt';
-        if( dirlistsSort.latest ) {
-            _dir = createDir  + dirlistsSort.latest.value +  '/result.txt';
-        }
-        return _dir;
-    }());
+
 
 var getResult = function( path ){
     var resultJson;
@@ -38,6 +31,18 @@ var getResult = function( path ){
 };
 
 exports.index = function(req, res){
+
+    var dirlists = tools.readDirNames( createDir ),
+        dirlistsSort = tools.disposeDirSort(dirlists),
+        post_times = [],
+        resultPath = (function(){
+            var _dir =  '/result.txt';
+            if( dirlistsSort.latest ) {
+                _dir = createDir  + dirlistsSort.latest.value +  '/result.txt';
+            }
+            return _dir;
+        }());
+
   var data = {
       title: '微信公众平台数据采集'
   };
@@ -48,6 +53,17 @@ exports.index = function(req, res){
   }
 
   data["post_times"] = post_times;
+
+  var options = [];
+  for(var attr in userConf ){
+      options.push({
+          value : attr,
+          text : userConf[attr].nick_name
+      });
+  }
+
+  data.options = options;
+
 
   res.render('index', data);
 };

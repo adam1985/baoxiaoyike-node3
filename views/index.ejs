@@ -25,7 +25,9 @@
             if( len > 0) {
 
         %>
-        <div class="art-time">同步数据时间：
+        <div class="post-art-setting">
+
+            同步数据时间：
             <select id="sync-art-time">
                 <% for (var n = 0; n < len; n++) {
                     var selected = "";
@@ -37,6 +39,20 @@
                     <option <%= selected %> value="<%= post_times[n].value %>"><%= post_times[n].text %></option>
                 <% } %>
             </select>
+
+            <span>
+            公众平台帐号：
+                <select id="select-platform">
+                    <% for (var i = 0; i < options.length; i++) {
+
+                    %>
+
+                    <option  value="<%= options[i].value %>"><%= options[i].text %></option>
+
+                    <% } %>
+                </select>
+            </span>
+
         </div>
         <% } %>
 		<div class="page-item-box" id="page-item-box">

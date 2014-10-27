@@ -19,13 +19,15 @@ var rootPath = process.cwd(),
     }());
 
 module.exports = function(req, res){
-    var dir = req.query.dir, resPath;
+    var dir = req.query.dir,
+        view_template = req.query.template,
+        resPath;
     if( dir ){
         resPath = createDir  + req.query.dir  +  '/pageJson.txt';
     } else {
         resPath = resultPath;
     }
-    var contentTemplate = fs.readFileSync( rootPath + '/views/content.ejs', 'utf8').toString(),
+    var contentTemplate = fs.readFileSync( rootPath + '/views/' + view_template, 'utf8').toString(),
         postSource = JSON.parse(fs.readFileSync( resPath, 'utf8').toString());
 
     if( postSource.length ){

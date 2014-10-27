@@ -12,6 +12,9 @@ var express = require('express')
   , postWeixin = require('./routes/postWeixin')
   , getWeixin = require('./routes/getWeixin')
   , getView = require('./routes/getView')
+  , upload = require('./routes/upload')
+  , syncPreview = require('./routes/syncPreview')
+  , syncWeixin = require('./routes/syncWeixin')
   , http = require('http')
   , path = require('path');
 
@@ -41,6 +44,9 @@ app.get('/readArt', readArt.getArt);
 app.get('/postWeixin', postWeixin);
 app.get('/getWeixin', getWeixin);
 app.get('/getView', getView);
+app.get('/upload', upload);
+app.get('/syncPreview', syncPreview);
+app.get('/syncWeixin', syncWeixin);
 
 
 http.createServer(app).listen(app.get('port'), function(){

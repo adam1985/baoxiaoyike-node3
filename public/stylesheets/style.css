@@ -5,7 +5,9 @@ a {
 }
 .hide{ display: none;}
 .wrapper{ width : 1000px; margin : 20px auto;}
-.art-time{ margin-top: 20px;}
+.post-art-setting{ margin-top: 20px;}
+.post-art-setting select{ height: 25px; padding: 0 5px;}
+.post-art-setting span{ margin-left: 20px;}
 .page-item-btn button,.post-page input{width:120px; text-align:center; height:30px; cursor:pointer;}
 .page-item{margin-top:15px; border-bottom : 1px dashed #666; padding-bottom: 15px;}
 .page-item .tinput{width:50%; height:30px; line-height:30px; padding:0 5px; margin: 5px 0;}
