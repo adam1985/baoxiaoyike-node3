@@ -1,8 +1,8 @@
 var ng = require('nodegrass'),
     login = require("./login");
 
-exports.getTicket = function( cb ){
-    login.loginWeixin( function(data, cookie){
+exports.getTicket = function( name, pwd, cb ){
+    login.loginWeixin( name, pwd, function(data, cookie){
         if( data.base_resp.ret == 0 ) {
             var redirect_url = data.redirect_url;
             ng.get('https://mp.weixin.qq.com' + redirect_url,function(data, status, header){

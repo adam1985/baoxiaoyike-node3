@@ -7,18 +7,18 @@ var fs = require('fs'),
     ejs = require('ejs');
 
 var rootPath = process.cwd(),
-    createDir = rootPath + '/create/',
-    dirlists = tools.readDirNames( createDir ),
-    dirlistsSort = tools.disposeDirSort(dirlists),
-    resultPath = (function(){
-        var _dir =  '/pageJson.txt';
-        if( dirlistsSort.latest ) {
-            _dir = createDir  + dirlistsSort.latest.value +  '/pageJson.txt';
-        }
-        return _dir;
-    }());
+    createDir = rootPath + '/create/';
 
 module.exports = function(req, res){
+var     dirlists = tools.readDirNames( createDir ),
+        dirlistsSort = tools.disposeDirSort(dirlists),
+        resultPath = (function(){
+            var _dir =  '/pageJson.txt';
+            if( dirlistsSort.latest ) {
+                _dir = createDir  + dirlistsSort.latest.value +  '/pageJson.txt';
+            }
+            return _dir;
+        }());
     var dir = req.query.dir,
         view_template = req.query.template,
         resPath;

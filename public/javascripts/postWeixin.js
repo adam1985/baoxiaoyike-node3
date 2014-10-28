@@ -1,4 +1,4 @@
-if( typeof isPost === undefined ){
+if( typeof isPost == undefined ){
     var isPost = true;
 }
 

@@ -15,7 +15,7 @@
             <input type="button" id="post-page-btn" value="抓取数据"  />
             <input type="button" id="update-title-btn" data-dir="<%= detail.dir %>" value="标题更新"  />
             <input type="button" id="remote-post-btn" value="远程同步网站"  />
-            <input type="button" id="remote-post-btn" value="远程同步公众平台"  />
+            <input type="button" id="sync-weixin-btn" value="远程同步公众平台"  />
         </div>
         <div class="hide page-load">
             正在操作中，请稍后...
@@ -26,33 +26,33 @@
 
         %>
         <div class="post-art-setting">
-
-            同步数据时间：
-            <select id="sync-art-time">
-                <% for (var n = 0; n < len; n++) {
-                    var selected = "";
-                    if( n == 0 ) {
-                        selected = "selected=selected";
-                    }
-                %>
-
-                    <option <%= selected %> value="<%= post_times[n].value %>"><%= post_times[n].text %></option>
-                <% } %>
-            </select>
-
-            <span>
-            公众平台帐号：
-                <select id="select-platform">
-                    <% for (var i = 0; i < options.length; i++) {
-
+            <form id="post-form">
+                同步数据时间：
+                <select id="sync-art-time" name="post_time">
+                    <% for (var n = 0; n < len; n++) {
+                        var selected = "";
+                        if( n == 0 ) {
+                            selected = "selected=selected";
+                        }
                     %>
 
-                    <option  value="<%= options[i].value %>"><%= options[i].text %></option>
-
+                        <option <%= selected %> value="<%= post_times[n].value %>"><%= post_times[n].text %></option>
                     <% } %>
                 </select>
-            </span>
 
+                <span>
+                    公众平台帐号：
+                    <select id="select-platform" name="post_platform">
+                        <% for (var i = 0; i < options.length; i++) {
+
+                        %>
+
+                        <option  value="<%= options[i].value %>"><%= options[i].text %></option>
+
+                        <% } %>
+                    </select>
+                </span>
+            </form>
         </div>
         <% } %>
 		<div class="page-item-box" id="page-item-box">
@@ -108,9 +108,15 @@
 
                                         var postState = list[i]["post-state"];
 
+
                                         if( !list[i]["post-state"] ){
                                             postState = 1;
+
+                                            if( !list[i].pageUrl ) {
+                                                postState = 2;
+                                            }
                                         }
+
 
                                         if( postState ) {
                                             postType.forEach(function(val, index){
@@ -209,6 +215,9 @@
 
                                         if( !list[i]["post-state"] ){
                                             postState = 1;
+                                            if( !list[i].pageUrl ) {
+                                                postState = 2;
+                                            }
                                         }
 
                                         if( postState ) {
@@ -357,7 +366,7 @@
                             $('#page-item-box').html( html );
                         }
                     }
-                })
+                });
             });
 
 
@@ -409,6 +418,20 @@
                         alert('远程同步文章完成');
                     }
                 }());
+            });
+
+            $('#sync-weixin-btn').on('click', function(){
+                var postForm = $('#post-form'),
+                    serializeArray = postForm.serializeArray();
+                $.ajax({
+                    url : '/upload',
+                    dataType : 'json',
+                    type : 'get',
+                    data : serializeArray,
+                    success : function( res ){
+                        console.log(res);
+                    }
+                });
             });
 			
 		});

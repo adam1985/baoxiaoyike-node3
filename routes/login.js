@@ -1,19 +1,15 @@
 var crypto = require('crypto'),
-    userConf = require('../config/userConf.js'),
     ng = require('nodegrass'),
     querystring = require("querystring"),
     hasher=crypto.createHash("md5");
 
-exports.loginWeixin = function( cb ) {
-    var targetUser = userConf[1],
-        userName = targetUser.user,
-        pwd = targetUser.pwd;
+exports.loginWeixin = function( name, pwd, cb ) {
 
     hasher.update(pwd);
     pwd = hasher.digest('hex');
 
     var query = {
-            username : userName,
+            username : name,
             pwd : pwd,
             imgcode : '',
             f : 'json'
