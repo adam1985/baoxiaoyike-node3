@@ -52,6 +52,15 @@
                         <% } %>
                     </select>
                 </span>
+
+                <span>
+                    预览微信号：
+                    <select id="select-preview" name="post_preview">
+                        <option selected="selected" value="yuan008598">yuan008598</option>
+                        <option value="baoxiaoylke">baoxiaoylke</option>
+                        <option value="baoxiaoing">baoxiaoing</option>
+                    </select>
+                </span>
             </form>
         </div>
         <% } %>
@@ -423,8 +432,8 @@
             $('#sync-weixin-btn').on('click', function(){
                 var postForm = $('#post-form'),
                     serializeArray = postForm.serializeArray();
-                $.ajax({
-                    url : '/upload',
+                var ticketDtd = $.ajax({
+                    url : '/getTicket',
                     dataType : 'json',
                     type : 'get',
                     data : serializeArray,
@@ -432,6 +441,30 @@
                         console.log(res);
                     }
                 });
+
+                ticketDtd.done(function(){
+                    /*$.ajax({
+                        url : '/syncPreview',
+                        dataType : 'json',
+                        type : 'get',
+                        data : serializeArray,
+                        success : function( res ){
+                           console.log(res);
+                        }
+                    });*/
+
+                    $.ajax({
+                        url : '/upload',
+                        dataType : 'json',
+                        type : 'get',
+                        data : serializeArray,
+                        success : function( res ){
+                            console.log(res);
+                        }
+                    });
+
+                });
+
             });
 			
 		});

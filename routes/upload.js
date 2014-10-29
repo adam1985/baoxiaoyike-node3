@@ -5,18 +5,19 @@ var ng = require('nodegrass'),
     fs = require( 'fs' ),
     https = require('https'),
     path = require('path'),
-    ticket = require("./ticket"),
-    userConf = require('../config/userConf'),
-    rootPath = process.cwd();
+    rootPath = process.cwd(),
+    ticketPath = rootPath + '/loger/ticket.txt';
 
 module.exports = function( req, res) {
 
-    var query = req.query,
-        post_platform = query.post_platform,
-        post_time = query.post_time,
-        curUser = userConf[post_platform];
 
-    ticket.getTicket(curUser.user, curUser.pwd, function(weixinWx, cookie){
+    var query = req.query,
+        post_time = query.post_time,
+        post_platform = query.post_platform,
+        ticketObj = JSON.parse(fs.readFileSync(ticketPath).toString()),
+        weixinWx = ticketObj.weixinWx,
+        cookie = ticketObj.cookie;
+
         var getParam = {
                 action : "upload_material",
                 f : "json",
@@ -27,7 +28,7 @@ module.exports = function( req, res) {
             },
             getParamStr = querystring.stringify(getParam) + weixinWx.param,
 
-            imgFile = rootPath + '/create/2014-10-23_15_38_03/00.jpg',
+            imgFile = rootPath + '/create/2014-10-23_15_38_03/10.jpg',
             file = fs.readFileSync(imgFile);
 
         var uploadMedia = function (medianame, reqData, callback) {
@@ -47,8 +48,9 @@ module.exports = function( req, res) {
                 return parseInt(_ran);
             }());
 
-            hasher.update(ran.toString());
-            var ranMd5 = hasher.digest('hex').substr(0, 16);
+            //hasher.update(ran.toString());
+
+            //var ranMd5 = hasher.digest('hex').substr(0, 16);
 
             var mimes = {
                 '.bmp': 'image/bmp',
@@ -79,12 +81,9 @@ module.exports = function( req, res) {
                 + 'Content-Disposition: form-data; name="Filename"' +
                 '\r\n\r\n' + basename;
 
-
             var payload2 =  '\r\n--' + boundaryKey + '\r\n'
                 + 'Content-Disposition: form-data; name="folder"'
                 + '\r\n\r\n' + '/cgi-bin/uploads';
-
-
 
             var payload3 =  '\r\n--' + boundaryKey + '\r\n'
                 + 'Content-Disposition: form-data; name="file"; filename="' + basename + '"' + '\r\n'
@@ -92,13 +91,14 @@ module.exports = function( req, res) {
 
             var payload = payload1 + payload2 + payload3;
 
-            var enddata = '\r\n--' + boundaryKey + '\r\n'
-                        + 'Content-Disposition: form-data; name="Upload"\r\n\r\n'
-                        + 'Submit Query\r\n'
+
+            var enddata = '--' + boundaryKey + '\r\n'
+                        + 'Content-Disposition: form-data; name="Upload"' + '\r\n\r\n'
+                        + 'Submit Query' + '\r\n'
                         + '--' + boundaryKey + '--';
 
-            console.log(payload, enddata);
-
+            var contentBinary = new Buffer(payload, 'utf-8'),
+                enddateBinary = new Buffer(enddata, 'utf-8');
 
             var contentLength = Buffer.byteLength(payload, 'utf8') +  reqData.length + Buffer.byteLength(enddata, 'utf8');
 
@@ -121,9 +121,8 @@ module.exports = function( req, res) {
                     "Origin" : "https://mp.weixin.qq.com"
                 }
             };
-            var req = https.request(options, function (response) {
+            var Req = https.request(options, function (response) {
                 var statusCode = response.statusCode;
-                //console.log('STATUS: ' + statusCode,options);
                 response.setEncoding('utf8');
                 var data = '';
                 response.on('data', function (chunk) {
@@ -132,29 +131,25 @@ module.exports = function( req, res) {
                     callback(data);
                 });
             });
-            req.write(payload, 'utf8');
-            req.write(reqData, 'binary');
-            req.write(enddata, 'utf8');
+            Req.write(payload, 'utf-8');
+            var fileStream = fs.createReadStream(medianame, {bufferSize : 4 * 1024});
+            fileStream.pipe(Req, {end: false});
+            fileStream.on('end', function() {
+                Req.end(enddata, 'utf-8');
+            });
+            /*Req.write(reqData, 'binary');*/
+            //Req.write(enddata, 'utf-8');
+           // Req.end();
 
-            req.end();
-
-            req.on('error', function (e) {
+            Req.on('error', function (e) {
                 console.error("error:" + e);
             });
         };
 
         uploadMedia( imgFile, file, function(data){
             res.set({'Content-Type':'text/plain'});
-            res.send(JSON.stringify({
-                success : true,
-                msg : "操作成功",
-                data : data
-            }));
-
+            res.send(data);
         });
-
-    });
-
 };
 
 

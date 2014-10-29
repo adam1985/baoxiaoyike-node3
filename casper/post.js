@@ -26,14 +26,14 @@ var base64 =  require('../module/base64'),
 
 casper.start('http://www.baoxiaoyike.cn/wp-admin/post-new.php', function() {
 
-    if( this.exists('#loginform') ) {
+    //if( this.exists('#loginform') ) {
         this.fill('#loginform', {
             'log': 'lvyuan',
             'pwd': 'zxcvbnm008598'
         }, false);
         this.click('#wp-submit');
         this.echo('正在模拟登录');
-    }
+    //}
 
 });
 
