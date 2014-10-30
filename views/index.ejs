@@ -20,6 +20,9 @@
         <div class="hide page-load">
             正在操作中，请稍后...
         </div>
+        <div class="hide sync-weixin-load" id="sync-weixin-load">
+
+        </div>
         <%
             var len = post_times.length;
             if( len > 0) {
@@ -44,12 +47,12 @@
                     公众平台帐号：
                     <select id="select-platform" name="post_platform">
                         <% for (var i = 0; i < options.length; i++) {
-
+                            if( i < 2 ) {
                         %>
 
                         <option  value="<%= options[i].value %>"><%= options[i].text %></option>
 
-                        <% } %>
+                        <% } }  %>
                     </select>
                 </span>
 
@@ -279,6 +282,7 @@
 			});
 
             emptyItemBtn.click(function(){
+                pageItem = pageBox.find('.page-item');
 				pageItem.each(function(index){
 					var $this = $(this);
                     pageItem.eq(index).remove();
@@ -429,9 +433,14 @@
                 }());
             });
 
+
             $('#sync-weixin-btn').on('click', function(){
                 var postForm = $('#post-form'),
-                    serializeArray = postForm.serializeArray();
+                    syncWeixinLoad = $('#sync-weixin-load'),
+                    serializeArray = postForm.serializeArray(),
+                    isLogin;
+
+                syncWeixinLoad.show().html('正在模拟登录中，请稍后...');
                 var ticketDtd = $.ajax({
                     url : '/getTicket',
                     dataType : 'json',
@@ -439,34 +448,77 @@
                     data : serializeArray,
                     success : function( res ){
                         console.log(res);
+                        if( res.loginRes.base_resp.ret == 0 ) {
+                            isLogin = true;
+                            syncWeixinLoad.html('登录成功，已获取到ticket');
+                        } else {
+                            syncWeixinLoad.html('登录失败');
+                        }
                     }
                 });
 
                 ticketDtd.done(function(){
-                    /*$.ajax({
-                        url : '/syncPreview',
-                        dataType : 'json',
-                        type : 'get',
-                        data : serializeArray,
-                        success : function( res ){
-                           console.log(res);
-                        }
-                    });*/
 
-                    $.ajax({
-                        url : '/upload',
-                        dataType : 'json',
-                        type : 'get',
-                        data : serializeArray,
-                        success : function( res ){
-                            console.log(res);
-                        }
-                    });
+                    if( isLogin ) {
+                        var pageItem = pageBox.find('.page-item'),
+                                pageLength = pageItem.length,
+                                pageIndex = 0,
+                                fileids = [];
+
+                        (function(){
+                            var arg = arguments;
+                            if( pageIndex < pageLength ) {
+                                syncWeixinLoad.html('开始上传第' + ( pageIndex + 1 ) + '个图集封面图片，请稍后...');
+                                var paramArray = serializeArray.concat();
+                                paramArray.push({
+                                    name : "index",
+                                    value : pageIndex
+                                });
+                                $.ajax({
+                                    url : '/upload',
+                                    dataType : 'json',
+                                    type : 'get',
+                                    data : paramArray,
+                                    success : function( res ){
+                                        pageIndex++;
+                                        if( res.base_resp.ret == 0 ){
+                                            fileids.push( res.content );
+                                        } else {
+                                            fileids.push("");
+                                        }
+                                        arg.callee();
+                                    }
+                                });
+                            } else {
+                                syncWeixinLoad.html('正在远程同步图集，并预览到指定微信号上，请稍后...');
+                                var postParams = serializeArray.concat();
+                                postParams.push({
+                                    name : "fileids",
+                                    value : fileids.join(',')
+                                });
+                                $.ajax({
+                                    url: '/syncPreview',
+                                    dataType: 'json',
+                                    type: 'get',
+                                    data: postParams,
+                                    success: function (res) {
+                                        syncWeixinLoad.hide();
+                                        if( res.ret == 0 ) {
+                                            alert('远程同步图集到微信成功');
+                                        } else {
+                                            alert('远程同步图集到微信失败');
+                                        }
+                                        console.log(res);
+                                    }
+                                });
+                            }
+
+                        }());
+
+                    }
 
                 });
-
             });
-			
 		});
 	</script>
   </body>

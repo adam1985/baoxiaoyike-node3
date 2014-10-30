@@ -1,8 +1,8 @@
 var casper = require('casper').create({
     pageSettings: {
         userAgent : "chrome",
-        loadImages:  false,        // The WebPage instance used by Casper will
-        loadPlugins: false        // use these settings
+        loadImages:  false,
+        loadPlugins: false
     },
     timeout : 30 * 1000,
     onTimeout : function(){
@@ -20,6 +20,8 @@ var casper = require('casper').create({
 
 var base64 =  require('../module/base64'),
     fs = require('fs'),
+    userConf = require('../config/userConf'),
+    curUser = userConf.website,
     postPath =  'loger/post_content.txt',
     args2 = casper.cli.args,
     post = JSON.parse(fs.read(postPath).toString());
@@ -28,8 +30,8 @@ casper.start('http://www.baoxiaoyike.cn/wp-admin/post-new.php', function() {
 
     //if( this.exists('#loginform') ) {
         this.fill('#loginform', {
-            'log': 'lvyuan',
-            'pwd': 'zxcvbnm008598'
+            'log': curUser.username,
+            'pwd': curUser.password
         }, false);
         this.click('#wp-submit');
         this.echo('正在模拟登录');
@@ -79,6 +81,5 @@ casper.waitFor(function check() {
             success : false
         })).exit();
 });
-
 
 casper.run();

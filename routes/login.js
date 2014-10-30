@@ -1,10 +1,9 @@
 var crypto = require('crypto'),
     ng = require('nodegrass'),
-    querystring = require("querystring"),
-    hasher=crypto.createHash("md5");
+    querystring = require("querystring");
 
 exports.loginWeixin = function( name, pwd, cb ) {
-
+    hasher=crypto.createHash("md5");
     hasher.update(pwd);
     pwd = hasher.digest('hex');
 

@@ -10,13 +10,15 @@ var ng = require('nodegrass'),
 
 module.exports = function( req, res) {
 
-
     var query = req.query,
         post_time = query.post_time,
         post_platform = query.post_platform,
+        pageIndex = query.index,
         ticketObj = JSON.parse(fs.readFileSync(ticketPath).toString()),
         weixinWx = ticketObj.weixinWx,
-        cookie = ticketObj.cookie;
+        cookie = ticketObj.cookie,
+        imageIndex = 0,
+        imageLen = 2;
 
         var getParam = {
                 action : "upload_material",
@@ -27,9 +29,16 @@ module.exports = function( req, res) {
                 ticket : weixinWx.ticket
             },
             getParamStr = querystring.stringify(getParam) + weixinWx.param,
+            imgFile;
 
-            imgFile = rootPath + '/create/2014-10-23_15_38_03/10.jpg',
-            file = fs.readFileSync(imgFile);
+            for(; imageIndex < imageLen; imageIndex++) {
+
+                imgFile = rootPath + '/create/' + post_time + '/' + pageIndex + imageIndex +'.jpg';
+                if(fs.existsSync(imgFile)){
+                    break;
+                }
+            }
+            var file = fs.readFileSync(imgFile);
 
         var uploadMedia = function (medianame, reqData, callback) {
 

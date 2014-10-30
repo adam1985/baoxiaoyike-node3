@@ -10,7 +10,7 @@ module.exports = function( req, res){
         post_platform = query.post_platform,
         curUser = userConf[post_platform];
 
-    ticket.getTicket(curUser.user, curUser.pwd, function(weixinWx, cookie){
+    ticket.getTicket(curUser.user, curUser.pwd, function(weixinWx, cookie, loginRes){
         var data = {
             weixinWx : weixinWx,
             cookie : cookie
@@ -21,6 +21,7 @@ module.exports = function( req, res){
         res.send(JSON.stringify({
             success : true,
             msg : "操作成功",
+            loginRes : loginRes,
             data : data
         }));
     });

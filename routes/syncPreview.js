@@ -13,6 +13,7 @@ module.exports = function( req, res ){
         post_platform = query.post_platform,
         curUser = userConf[post_platform],
         preusername = query.post_preview,
+        fileids = query.fileids.split(','),
         dataPath = workPath + post_time + '/',
         pageJsonStr = fs.readFileSync( dataPath + 'pageJson.txt').toString(),
         pageJson = JSON.parse( pageJsonStr),
@@ -37,6 +38,8 @@ module.exports = function( req, res ){
                 list : v.pages,
                 picSrc : imgPath
             });
+
+            pageJson[i]['fileid'] = fileids[i];
         });
     }
 
@@ -47,7 +50,7 @@ module.exports = function( req, res ){
             _postData["title" +i] = v.title;
             _postData["sourceurl" +i] = v.viewSource;
             _postData["show_cover_pic" +i] = 0;
-            _postData["fileid" +i] = "";
+            _postData["fileid" +i] = v.fileid;
             _postData["digest" +i] = curUser.intro;
             _postData["content" +i] = v.content;
             _postData["author" +i] = v.username;
