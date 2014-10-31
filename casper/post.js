@@ -75,11 +75,11 @@ casper.waitFor(function check() {
         this.echo(JSON.stringify({
             success : false
         })).exit();
-    });
+    }, 20 * 1000);
 }, function timeout() {
         this.echo(JSON.stringify({
             success : false
         })).exit();
-});
+}, 30 * 1000);
 
 casper.run();
