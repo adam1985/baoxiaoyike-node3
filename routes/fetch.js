@@ -199,7 +199,8 @@ exports.fetchresult = function(req, res){
 			var targetLink = trim(pageLinks[pageIndex]),
                 //targetUser = userList[pageIndex],
 				targetUser = '點右边关註»',
-				isWeixin = /mp\.weixin\.qq\.com|www\.aixun\.cc/.test(targetLink);
+				isWeixin = /mp\.weixin\.qq\.com/.test(targetLink),
+                isAiXun = /www\.aixun\.cc/.test(targetLink);
 
 				var singlePage = {};
 				
@@ -207,13 +208,17 @@ exports.fetchresult = function(req, res){
                 singlePage.viewSource = 'http://mp.weixin.qq.com/mp/getmasssendmsg?__biz=MjM5NTI1NDczOA==#wechat_webview_type=1&wechat_redirect';
                 singlePage.username = targetUser;
 				
-			if( isWeixin ) {
+			if( isWeixin || isAiXun ) {
 				nodegrass.get(targetLink, function (data) {
 					var $ = cheerio.load(data),
 						title = $('title').text();
 					
 					singlePage.title = title;
 					singlePage.pages = [];
+
+                    if( isAiXun ) {
+                        singlePage.pages.push({});
+                    }
 					
 					var imgRex = /var\s+msg_cdn_url\s+=\s+"(.*)";/gm,
 						innerPage = {}, 
