@@ -199,9 +199,8 @@ exports.fetchresult = function(req, res){
 			var targetLink = trim(pageLinks[pageIndex]),
                 //targetUser = userList[pageIndex],
 				targetUser = '點右边关註»',
-				isWeixin = /mp\.weixin\.qq\.com/.test(targetLink);
-				
-				
+				isWeixin = /mp\.weixin\.qq\.com|www\.aixun\.cc/.test(targetLink);
+
 				var singlePage = {};
 				
 				singlePage.sourcePage = targetLink;
