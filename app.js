@@ -22,7 +22,7 @@ var express = require('express')
 var app = express();
 
 app.configure(function(){
-  app.set('port', process.env.PORT || 1234);
+  app.set('port', process.env.PORT || 2222);
   app.set('views', __dirname + '/views');
   app.set('view engine', 'ejs');
   app.use(express.favicon());
@@ -51,6 +51,6 @@ app.get('/syncPreview', syncPreview);
 app.get('/syncWeixin', syncWeixin);
 
 
-http.createServer(app).listen(app.get('port'), function(){
+http.createServer(app).listen(2222, function(){
   console.log("Express server listening on port " + app.get('port'));
 });
