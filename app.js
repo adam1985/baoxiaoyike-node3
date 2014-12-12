@@ -16,6 +16,7 @@ var express = require('express')
   , upload = require('./routes/upload')
   , syncPreview = require('./routes/syncPreview')
   , syncWeixin = require('./routes/syncWeixin')
+  , downloadVideo = require('./routes/download')
   , http = require('http')
   , path = require('path');
 
@@ -49,6 +50,7 @@ app.get('/getTicket', getTicket);
 app.get('/upload', upload);
 app.get('/syncPreview', syncPreview);
 app.get('/syncWeixin', syncWeixin);
+app.get('/download', downloadVideo);
 
 
 http.createServer(app).listen(2222, function(){

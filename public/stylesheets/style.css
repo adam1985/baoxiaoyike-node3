@@ -8,10 +8,10 @@ a {
 .post-art-setting{ margin-top: 20px;}
 .post-art-setting select{ height: 25px; padding: 0 5px;}
 .post-art-setting span{ margin-left: 20px;}
-.page-item-btn button,.post-page input{width:120px; text-align:center; height:30px; cursor:pointer;}
+.page-item-btn button,.post-page input,.download-video{width:120px; text-align:center; height:30px; cursor:pointer;}
 .page-item{margin-top:15px; border-bottom : 1px dashed #666; padding-bottom: 15px;}
 .page-item .tinput{width:50%; height:30px; line-height:30px; padding:0 5px; margin: 5px 0;}
-.page-item input.url{width: 100%;}
+.page-item input.url{width: 80%;}
 .select{height:30px; line-height:30px; width: 100px; margin-right:10px;}
 .post-label{ }
 .post-msg{margin-left: 10px;}

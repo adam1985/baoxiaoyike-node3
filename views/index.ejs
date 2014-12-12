@@ -74,6 +74,7 @@
                 <% for (var i = 0; i < list.length; i++) { %>
                     <div class="page-item post-page-list">
                         <input class="tinput url" type="text" value="<%= list[i].sourcePage %>" placeholder="请输入微信页面地址" />
+						<input type="button" class="download-video" value="下载打水印"  />
                         <div class="remote-post">
                             <form>
                                 <input name="title" class="tinput title" type="text" value="<%= list[i].title %>"/>
@@ -166,6 +167,7 @@
                 <% for (var i = 0; i < 6; i ++) { %>
                 <div class="page-item">
                     <input class="tinput url" type="text" value="" placeholder="请输入微信页面地址" />
+					<input type="button" class="download-video" value="下载打水印"  />
                 </div>
                 <% } %>
             <% } %>
@@ -178,6 +180,7 @@
             {{ for (var i = 0; i < list.length; i ++) { }}
                 <div class="page-item post-page-list">
                         <input class="tinput url" type="text" value="{{= list[i].sourcePage }}" placeholder="请输入微信页面地址" />
+						<input type="button" class="download-video" value="下载打水印"  />
                         <div class="remote-post">
                             <form>
                                 <input name="title" class="tinput title" type="text" value="{{= list[i].title }}" />
@@ -275,7 +278,7 @@
                 pageLoad = $('.page-load'),
 			pageBox = $('#page-item-box'), 
 			pageItem = pageBox.find('.page-item'),
-			pageItemTemp = '<div class="page-item"><input class="tinput url" type="text" placeholder="请输入微信页面地址" value=""></div>'; 
+			pageItemTemp = '<div class="page-item"><input class="tinput url" type="text" placeholder="请输入微信页面地址" value=""><input type="button" class="download-video" value="下载打水印"  /></div>'; 
 			addItemBtn.click(function(){
 				
 				pageBox.append(pageItemTemp);
@@ -519,6 +522,26 @@
 
                 });
             });
+			
+			$(document).on('click', '.download-video', function(e){
+				pageLoad.show(0);
+				var url = $(this).prev('.tinput').val();
+				if(url){
+					$.ajax({
+						url: '/download',
+						dataType: 'json',
+						cache: false,
+						type: 'get',
+						data: {
+							url : url
+						},
+						success: function (res) {
+							pageLoad.hide(0);
+							alert(res.msg);
+						}
+					});
+				}
+			});
 		});
 	</script>
   </body>
