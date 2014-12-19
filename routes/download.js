@@ -154,7 +154,7 @@ module.exports = function( req, response) {
 										fs.writeFile(createPath, fileData, "binary", function(err){
 											console.log('下载完成!');
 											console.log('ffmpeg -i ' + createPath + ' -vf "movie=' + shuiyin + ' [logo],[in][logo] overlay=0:0 [out]" -y -qscale 4 ' + readyPath);
-											var child = exec('ffmpeg -i ' + createPath + ' -vf "movie=' + shuiyin + ' [logo],[in][logo] overlay=10:0 [out]" -y -qscale 4 ' + readyPath,
+											var child = exec('ffmpeg -i ' + createPath + ' -vf "movie=' + shuiyin + ' [logo],[in][logo] overlay=10:10 [out]" -y -qscale 4 ' + readyPath,
 											  function (error, stdout, stderr) {
 												if (!error) {
 												  response.json({
