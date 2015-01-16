@@ -211,7 +211,7 @@ exports.fetchresult = function(req, res){
 			if( isWeixin || isAiXun ) {
 				nodegrass.get(targetLink, function (data) {
 					var $ = cheerio.load(data),
-						title = $('title').text();
+						title = $('#activity-name').eq(0).text();
 					
 					singlePage.title = title;
 					singlePage.pages = [];
